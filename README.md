@@ -1,17 +1,15 @@
-# Online Quiz
+# School Grading, Report Card, and Fees Tracking System 
 ![developer](https://img.shields.io/badge/Developed%20By%20%3A-Sumit%20Kumar-red)
 ---
 ## screenshots
 ### Homepage
-![homepage snap](https://github.com/sumitkumar1503/onlinequiz/blob/master/static/screenshots/homepage.png?raw=true)
+![homepage snap](https://github.com/Liven-Allan/Sch_Management_System/tree/main/static/screenshots/homepage.png?raw=true)
 ### Admin Dashboard
-![dashboard snap](https://github.com/sumitkumar1503/onlinequiz/blob/master/static/screenshots/adminhomepage.png?raw=true)
-### Exam Rules
-![invoice snap](https://github.com/sumitkumar1503/onlinequiz/blob/master/static/screenshots/rules.png?raw=true)
-### Exam
-![doctor snap](https://github.com/sumitkumar1503/onlinequiz/blob/master/static/screenshots/exam.png?raw=true)
+![dashboard snap](https://github.com/Liven-Allan/Sch_Management_System/tree/main/static/screenshots/adminhomepage.png?raw=true)
+### Exam and Test Assessment 
+![doctor snap](https://github.com/Liven-Allan/Sch_Management_System/tree/main/static/screenshots/exam.png?raw=true)
 ### Teacher
-![doctor snap](https://github.com/sumitkumar1503/onlinequiz/blob/master/static/screenshots/teacher.png?raw=true)
+![doctor snap](https://github.com/Liven-Allan/Sch_Management_System/tree/main/static/screenshots/teacher.png?raw=true)
 ---
 ## Functions
 ### Admin
@@ -19,29 +17,16 @@
 ```
 py manage.py createsuperuser
 ```
-- After Login, can see Total Number Of Student, Teacher, Course, Questions are there in system on Dashboard.
-- Can View, Update, Delete, Approve Teacher.
-- Can View, Update, Delete Student.
-- Can Also See Student Marks.
-- Can Add, View, Delete Course/Exams.
-- Can Add Questions To Respective Courses With Options, Correct Answer, And Marks.
-- Can View And Delete Questions Too.
+- After Login, can see Total Number Of Student, Teacher.
+- Can View, Add, Delete, Teacher.
+- Can View, Add, Delete Student.
+- Can See Student Marks (Exam Marks and Test Marks).
+- Can Add, View, Delete Exam or Test Record
 
 ### Teacher
-- Apply for job in System. Then Login (Approval required by system admin, Then only teacher can login).
-- After Login, can see Total Number Of Student, Course, Questions are there in system on Dashboard.
-- Can Add, View, Delete Course/Exams.
-- Can Add Questions To Respective Courses With Options, Correct Answer, And Marks.
-- Can View And Delete Questions Too.
-> **_NOTE:_**  Basically Admin Will Hire Teachers To Manage Courses and Questions.
-
-### Student
-- Create account (No Approval Required By Admin, Can Login After Signup)
-- After Login, Can See How Many Courses/Exam And Questions Are There In System On Dashboard.
-- Can Give Exam Any Time, There Is No Limit On Number Of Attempt.
-- Can View Marks Of Each Attempt Of Each Exam.
-- Question Pattern Is MCQ With 4 Options And 1 Correct Answer.
----
+- Registered teachers by the admin can only login once given credentials.
+- After Login, can see only students of a particular class which was selected during registering of a teacher.
+- Can Add, View, Delete Exam or Test marks for individual students.
 
 ## HOW TO RUN THIS PROJECT
 - Install Python(3.7.6) (Dont Forget to Tick Add to Path while installing Python)
