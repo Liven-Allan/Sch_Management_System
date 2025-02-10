@@ -1,0 +1,88 @@
+{% extends 'quiz/adminbase.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        a:link {
+            text-decoration: none;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            // When class is selected
+            $('#id_assigned_class').change(function () {
+                var classId = $(this).val();
+                console.log("Selected Class ID: " + classId);  // Debug: Log the selected class ID
+            });
+
+            // Before form submission, log the form data to console
+            $('form').submit(function(event) {
+                var formData = {};
+                formData['username'] = $('#id_username').val();
+                formData['password'] = $('#id_password').val();
+                formData['first_name'] = $('#id_first_name').val();
+                formData['last_name'] = $('#id_last_name').val();
+                formData['mobile'] = $('#id_mobile').val();
+                formData['address'] = $('#id_address').val();
+                formData['assigned_class'] = $('#id_assigned_class').val();
+
+                // Log all form data to the console
+                console.log("Form Data to be Sent:");
+                console.log(formData);
+
+                // Optional: Prevent form submission if you just want to see the console log
+                // event.preventDefault();  
+            });
+        });
+    </script>
+</head>
+
+<h2 class="text-center text-primary">Student Signup</h2>
+<form method="POST" autocomplete="off" enctype="multipart/form-data" style="margin: 100px; margin-top: 0;">
+    {% csrf_token %}
+    <div class="row my-3">
+        <div class="col-md-6">
+            <label for="first_name">First Name</label>
+            {% render_field userForm.first_name class="form-control" placeholder="First Name" %}
+        </div>
+        <div class="col-md-6">
+            <label for="last_name">Last Name</label>
+            {% render_field userForm.last_name class="form-control" placeholder="Last Name" %}
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-6">
+            <label for="mobile">Mobile</label>
+            {% render_field studentForm.mobile class="form-control" placeholder="Mobile" %}
+        </div>
+        <div class="col-md-6">
+            <label for="address">Address</label>
+            {% render_field studentForm.address class="form-control" placeholder="Address" %}
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-6">
+            <label for="assigned_class">Class</label>
+            {% render_field studentForm.assigned_class class="form-control" %}
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-6">
+            <label for="learner_lin">Student LIN</label>
+            {% render_field studentForm.learner_lin class="form-control" %}
+        </div>
+    </div>
+   
+    <div class="mb-3">
+        <label for="profile_pic">Profile Picture</label>
+        {% render_field studentForm.profile_pic class="form-control" %}
+    </div>
+    <button type="submit" class="btn btn-primary">Sign Up</button>
+</form>
+<br><br><br>
+{% endblock %}

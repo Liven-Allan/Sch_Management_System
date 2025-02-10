@@ -1,0 +1,117 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <style>
+    h2 { text-align: center; margin-bottom: 20px; }
+    .fee-table { margin: 20px; text-align: center; }
+    .fee-table h3 { background-color: #f8f9fa; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+    table { margin-top: 20px; width: 100%; border: 1px solid #ddd; }
+    table thead { background-color: #007bff; color: #fff; }
+    table td, table th { text-align: left; padding: 10px; border: 1px solid #ddd; }
+    table img { height: 40px; width: 40px; border-radius: 50%; }
+    .panel-heading { text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+    .nav-buttons { margin-top: 10px; text-align: center; }
+    .nav-buttons {display: flex;justify-content: center;gap: 10px;margin-top: 20px;}
+
+  </style>
+</head>
+
+<div class="container">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <span>Student Fees</span>
+      <span class="pull-right">
+        {% if selected_year_name %}
+          <strong>Year: {{ selected_year_name }}</strong>
+        {% endif %}
+        {% if selected_term_name %}
+          <strong>Term: {{ selected_term_name }}</strong>
+        {% endif %}
+      </span>
+    </div>
+
+    <form method="get" class="form-inline text-center">
+      <select name="year_id" class="form-control" style="margin-bottom: 10px;">
+        <option value="">Select Year</option>
+        {% for year in years %}
+          <option value="{{ year.id }}" {% if year.id|stringformat:"s" == selected_year %}selected{% endif %}>{{ year.year_name }}</option>
+        {% endfor %}
+      </select>
+
+      <select name="term_id" class="form-control" style="margin-bottom: 10px;">
+        <option value="">Select Term</option>
+        {% for term in terms %}
+          <option value="{{ term.id }}" {% if term.id|stringformat:"s" == selected_term %}selected{% endif %}>{{ term.term_name }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit" class="btn btn-primary" style="margin-left: 20px;">Filter</button>
+    </form>
+
+    <div class="fee-table">
+      {% if current_class %}
+        <h3>{{ current_class }}</h3>
+
+        <div class="nav-buttons">
+          {% if class_index > 0 %}
+            <a href="?year_id={{ selected_year }}&term_id={{ selected_term }}&class_index={{ class_index|add:'-1' }}" 
+               class="btn btn-primary" style="margin-right: 10px;">
+              Previous
+            </a>
+          {% endif %}
+        
+          {% if class_index < total_classes|add:'-1' %}
+            <a href="?year_id={{ selected_year }}&term_id={{ selected_term }}&class_index={{ class_index|add:'1' }}" 
+               class="btn btn-primary">
+              Next
+            </a>
+          {% endif %}
+        </div>
+
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Student Name</th>
+              <th>Total Fee</th>
+              <th>Last Amount Paid</th>
+              <th>Balance</th>
+              <th>Last Payment Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for fee in current_fees %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ fee.student.user.get_full_name }}</td>
+                <td>{{ fee.total_fee }}</td>
+                <td>{{ fee.amount_paid }}</td>
+                <td>{{ fee.balance }}</td>
+                <td>{% if fee.last_payment_date %}{{ fee.last_payment_date|date:"Y-m-d" }}{% else %}N/A{% endif %}</td>
+                <td>
+                    <a href="{% url 'manage_payment' fee.student.id %}?year_id={{ selected_year }}&term_id={{ selected_term }}&class_index={{ class_index }}" 
+                       class="btn btn-success btn-sm">Record Payment</a>
+                    
+                    <a href="{% url 'view_payments' fee.student.id %}?year_id={{ selected_year }}&term_id={{ selected_term }}&class_index={{ class_index }}" 
+                       class="btn btn-info btn-sm">View Payments</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="text-center">No classes available.</p>
+      {% endif %}
+      
+    </div>
+  </div>
+</div>
+
+{% endblock %}

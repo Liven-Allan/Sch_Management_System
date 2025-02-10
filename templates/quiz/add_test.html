@@ -1,0 +1,48 @@
+{% extends 'quiz/adminbase.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Load Bootstrap CSS and JS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<div class="container mt-5">
+    <h3 class="text-center text-primary">Add {{ model_name }}</h3>
+
+    <form method="POST" autocomplete="off">
+        {% csrf_token %}
+        
+        <!-- Year Field -->
+        <div class="row">
+            <div class="col-md-6">
+                <label for="id_year">Year</label>
+                {% render_field form.year class="form-control" placeholder="Year" %}
+            </div>
+        </div>
+
+        <!-- Month Field -->
+        <div class="row my-3">
+            <div class="col-md-6">
+                <label for="id_month">Month</label>
+                {% render_field form.month class="form-control" placeholder="Month" %}
+            </div>
+        </div>
+
+        <!-- Term Field -->
+        <div class="row my-3">
+            <div class="col-md-6">
+                <label for="id_term">Term</label>
+                {% render_field form.term class="form-control" %}
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-block">Add {{ model_name }}</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <style>
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .academic-year-table {
+      margin-top: 20px;
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    table thead {
+      background-color: #007bff;
+      color: #fff;
+    }
+    table td, table th {
+      text-align: left;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+    table th {
+      width: 20%;
+    }
+    .panel-heading {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<div class="container">
+  <h2>Manage Academic Years and Terms</h2>
+
+  <div class="form-section">
+    <form method="post" class="form-inline">
+      {% csrf_token %}
+      <div class="form-group">
+        {{ year_form.as_p }}
+      </div>
+      <div id="terms-container">
+        <h3>Add Term</h3>
+        <div class="term-field">
+          <select name="terms" class="form-control">
+            <option value="Term 1">Term 1</option>
+            <option value="Term 2">Term 2</option>
+            <option value="Term 3">Term 3</option>
+          </select>
+        </div>
+      </div>
+    <!---  <button type="button" class="btn btn-secondary" id="add-term-btn">Add Another Term</button> -->
+      <button type="submit" class="btn btn-primary" style="margin-top: 10px;" >Add Academic Year with Term</button>
+    </form>
+  </div>
+
+  <div class="academic-year-table">
+    <h3>Existing Academic Years and Term</h3>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Terms</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for year in years %}
+          <tr>
+            <td>{{ year.year_name }}</td>
+            <td>
+              <ul>
+                {% for term in year.terms.all %}
+                  <li>
+                    {{ term.term_name }}
+                    <a href="{% url 'delete_term' term.id %}" style="margin-bottom: 10px;" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this term?')">
+                      Delete Term
+                    </a>
+                    <a href="{% url 'enroll_students' year.id term.id %}" style="margin-bottom: 10px;" class="btn btn-success btn-sm">Enroll Students</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </td>
+            <td>
+              <a href="{% url 'delete_academic_year' year.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this academic year? This will also delete its associated terms.')">
+                Delete Year
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3" class="text-muted text-center">No academic years available.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  document.getElementById('add-term-btn').addEventListener('click', function () {
+    const container = document.getElementById('terms-container');
+    const termField = document.querySelector('.term-field').cloneNode(true);
+    container.appendChild(termField);
+  });
+</script>
+
+{% endblock %}

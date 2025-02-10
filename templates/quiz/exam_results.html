@@ -1,0 +1,139 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <style>
+    a:link {
+      text-decoration: none;
+    }
+    h6 {
+      text-align: center;
+    }
+    .row {
+      margin: 100px;
+    }
+    .class-group {
+      display: none;
+    }
+    .class-group.active {
+      display: block;
+    }
+    .class-navigation {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .class-navigation button {
+      margin: 5px;
+    }
+    table img {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+    }
+    table {
+      margin-top: 20px;
+    }
+    table td {
+      text-align: left;
+    }
+  </style>
+</head>
+<div class="container">
+  <div class="panel panel-primary">
+      <div class="panel-heading">
+          <h6 class="panel-title">Marked Students (Exams) - Admin View</h6>
+      </div>
+
+      <!-- Class navigation buttons -->
+      <div class="class-navigation">
+          <button id="prev-class" class="btn btn-default"> &lt; </button>
+          <button id="next-class" class="btn btn-default"> &gt; </button>
+      </div>
+
+      <!-- Grouped students by class -->
+      <div id="class-container">
+          {% for class_name, students in marked_students_by_class.items %}
+          <div class="class-group" data-class="{{ class_name }}">
+              <h4>{{ class_name }}</h4>
+              <a href="{% url 'print_exams_folder' class_name %}" class="btn btn-info">Print Exams Folder</a>
+              <table class="table table-hover">
+                  <thead>
+                      <tr>
+                          <th>Name</th>
+                          <th>Exam</th>
+                          <th>Action</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.exam }}</td>
+                        <td>
+                            <!-- View Marks Button -->
+                            <a href="{% url 'admin_edit_exam_marks' student.mark.id %}?selected_class={{ class_name }}" class="btn btn-primary">View Marks</a>
+                            <!-- Print Exam Button -->
+                            <a href="{% url 'generate_exam_pdf' student.mark.id %}" class="btn btn-success" target="_blank">Print Exam</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    var classGroups = $('.class-group');
+    var currentIndex = 0;
+
+    // Get the selected class from the URL query parameter
+    var selectedClass = new URLSearchParams(window.location.search).get('selected_class');
+    if (selectedClass) {
+      classGroups.each(function(index, element) {
+        if ($(element).data('class') === selectedClass) {
+          currentIndex = index;
+          return false; // Stop the loop when the class is found
+        }
+      });
+    }
+
+    $(classGroups[currentIndex]).addClass('active');
+
+    $('#next-class').click(function() {
+      if (currentIndex < classGroups.length - 1) {
+        $(classGroups[currentIndex]).removeClass('active');
+        currentIndex++;
+        $(classGroups[currentIndex]).addClass('active');
+        updateURLWithSelectedClass();
+      }
+    });
+
+    $('#prev-class').click(function() {
+      if (currentIndex > 0) {
+        $(classGroups[currentIndex]).removeClass('active');
+        currentIndex--;
+        $(classGroups[currentIndex]).addClass('active');
+        updateURLWithSelectedClass();
+      }
+    });
+
+    function updateURLWithSelectedClass() {
+      var selectedClass = $(classGroups[currentIndex]).data('class');
+      var currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('selected_class', selectedClass);
+      window.history.pushState({}, '', currentUrl);
+    }
+  });
+</script>
+
+
+{% endblock content %}

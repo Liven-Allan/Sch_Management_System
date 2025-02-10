@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <style>
+            a:link {
+                text-decoration: none;
+            }
+            h2 {
+                text-align: center;
+                margin-top: 20px;
+            }
+            .container {
+                margin: 50px auto;
+            }
+            .btn-primary {
+                margin-top: 20px;
+            }
+            table {
+                width: 100%;
+                margin-top: 20px;
+                border-collapse: collapse;
+            }
+            table th, table td {
+                text-align: left;
+                padding: 8px;
+                color: blue !important;
+            }
+            table th {
+                background-color: #337ab7;
+                color: white;
+            }
+            table, th, td {
+                border: 1px solid #ddd;
+                color: blue !important;
+            }
+            .subject-item,
+    .marks-item {
+        border-bottom: 1px solid #ddd;  /* Adds a line under each subject and mark */
+        padding: 5px 0; /* Adds some space above and below each item */
+    }
+    
+    .table-bordered th, .table-bordered td {
+        border: 1px solid #ddd; /* Keeps the table bordered */
+        color: blue !important;
+        
+    }
+    
+    .table-bordered {
+        border-collapse: collapse; /* Ensures the table borders merge correctly */
+    }
+    
+    .styled-header {
+        color: red !important; /* Red text color */
+        border: 2px solid blue !important; /* Blue border around the text */
+        display: inline-block; /* Make the border wrap around the text */
+        padding: 10px 20px; 
+        text-align: center; 
+        margin-left: 40%;
+        margin-bottom: 1px;
+        margin-top: 5px;
+    }
+
+    .styled-header1 {
+        color: red !important; /* Red text color */
+        border: 2px solid blue !important; /* Blue border around the text */
+        display: inline-block; /* Make the border wrap around the text */
+        padding: 10px 20px; 
+        text-align: center; 
+        margin-left: 60%;
+    }
+    
+    .footer{
+        text-align: center;
+    }
+
+    .blue-text-table th, 
+    .blue-text-table td {
+        color: blue !important; /* Apply blue color to all text in the table */
+    }
+
+    .remarks-section strong,
+    .remarks-section .dots {
+        color: blue !important; /* Set text and dots color to blue */
+        font-size: 0.8em;
+    }  
+        
+    .position-summary strong,
+    .position-summary .dots {
+        color: blue !important; /* Set text and dots color to blue */
+
+    }
+    .position-summary .text-on-dashed {
+        color: blue !important; /* Set the text color to blue */
+        font-size: 0.7em;
+    }
+
+        .position-summary .dashed-line {
+           
+            display: inline-block;
+            width: 50%;
+            margin-top: 1px; /* Optional: Adjust spacing if needed */
+        }    
+       
+        .current-date {
+            color: blue !important;
+            font-weight: bold; /* Optional: Make the text bold */
+            font-size: 0.7em;
+        }    
+    
+        .footer strong {
+            font-size: 0.7em;
+            color: blue !important; /* Set text color to blue */
+        }
+        .footer.school-name strong {
+            color: red !important; /* Set text color to red */
+            font-size: 1.2em; /* Make the font size larger */
+            font-weight: bold; /* Ensure the text remains bold */
+            text-align: center; /* Center align the text if needed */
+            display: block; /* Ensures it spans the full width for alignment */
+        }
+        
+        .container {
+            margin-top: 1px; /* Adjust to reduce space between container and footer */
+        }
+
+        .content-wrapper {
+            border: 2px solid black;
+            padding: 5px;
+            margin: 5px;
+            color: blue !important;
+         }
+
+    
+        </style>
+    </head>
+
+<body>
+    <div class="content-wrapper" >
+
+        {% load static %}
+        <div class="footer">
+            <img src="{{ request.scheme }}://{{ request.get_host }}{% static 'image/sch.jpg' %}" 
+     alt="School Badge" 
+     style="float: left; width: 100px; height: auto; margin-right: 10px;">
+            <div>
+                <div class="footer school-name">
+                    <strong style=" color: blue;">ABESTHER KINDERGARTEN AND PRIMARY SCHOOL</strong> 
+                </div>
+                <div class="footer">
+                    <strong>P.O. Box 71407, Kampala Ndejje - Kyadondo Mirimu Cell Makindye Ssabagabo Municipality</strong> 
+                </div>
+                <div class="footer">
+                    <strong>Tel: 0772-409738, 0704 409738, 0774906050 Email: abestherblessedschool@yahoo.com</strong> 
+                </div>
+            </div>
+        </div>
+        
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="styled-header1" style="font-size: 0.8em;">TERMINAL REPORT</h2>
+            <span class="current-date" style="margin-left: 30px;">DATE: {{ current_date }}</span>  <!-- Display the current date here -->
+        </div>
+        <div class="position-summary" style="position: relative; white-space: nowrap;">
+            <span class="text-on-dashed" >NAME: {{ student_name }}</span>
+            <span class="text-on-dashed" style="margin-left: 20px; ">CLASS: {{ class_name }}</span>
+            <span class="text-on-dashed" style="margin-left: 20px; ">TERM: {{ exam_records.0.term }}</span>
+        </div>
+        <div class="position-summary" style="position: relative; white-space: nowrap;">
+            <span class="text-on-dashed" >SCHOOL PAY CODE: {{ school_pay_code }}</span>
+            <span class="text-on-dashed" style="margin-left: 20px;">LEARNER'S LIN: {{ learner_lin }}</span>
+        </div>
+        <table class="table table-bordered blue-text-table">
+            <thead>
+                <tr>
+                    <th style="font-size: 0.7em;">SUBJECTS</th>
+                    <th style="font-size: 0.7em;">FULL MARKS</th>
+                    <th style="font-size: 0.7em;">MARKS GAINED</th>
+                    {% if show_agg_column %}
+                        <th style="font-size: 0.7em;">AGG</th> <!-- Only show if the condition is true -->
+                    {% endif %}
+                    <th style="font-size: 0.7em;">REMARKS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exam_record in exam_records %}
+                    <tr>
+                        <td>
+                            {% for subject in exam_record.subject_marks %}
+                                <div class="subject-item" style="font-size: 0.7em;  color: blue !important;">{{ subject.name }}</div>
+                            {% endfor %}
+                            <div class="subject-item" style="font-size: 0.7em;  color: blue !important;"><strong>TOTAL</strong></div>
+                        </td>
+                        <td>
+                            {% for subject in exam_record.subject_marks %}
+                                <div class="marks-item" style="font-size: 0.7em;  color: blue !important;">100</div>
+                            {% endfor %}
+                            <div class="marks-item" style="font-size: 0.7em;  color: blue !important;"><strong>{{ exam_record.total_full_marks }}</strong></div>
+                        </td>
+                        <td>
+                            {% for subject in exam_record.subject_marks %}
+                                <div class="marks-item" style="font-size: 0.7em;  color: blue !important;">{{ subject.marks }}</div>
+                            {% endfor %}
+                            <div class="marks-item" style="font-size: 0.7em;  color: blue !important;"><strong>{{ exam_record.total_marks }}</strong></div>
+                        </td>
+                        {% if show_agg_column %}
+                            <td> <!-- New AGG column -->
+                                {% for subject in exam_record.subject_marks %}
+                                    <div class="marks-item" style="font-size: 0.7em;  color: blue !important;">{{ subject.aggregate }}</div>
+                                {% endfor %}
+                                <div class="marks-item" style="font-size: 0.7em;  color: blue !important;"><strong>{{ exam_record.total_aggregate }}</strong></div>
+                            </td>
+                        {% endif %}
+                        <td>
+                            {% for subject in exam_record.subject_marks %}
+                                <div class="marks-item" style="font-size: 0.7em;  color: blue !important;">{{ subject.remarks }}</div>
+                            {% endfor %}
+                            <div class="marks-item" style="font-size: 0.7em;  color: blue !important;"><strong></strong></div> <!-- Placeholder for TOTAL row -->
+                            <div class="marks-item" style="font-size: 0.7em;  color: blue !important;"><strong></strong></div> <!-- Placeholder for TOTAL row -->
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+     <!-- Summary Section -->
+     <div class="position-summary" style="white-space: nowrap; font-size: 0.8em;">
+        {% if class_name in allowed_classes %}
+            <strong style="font-size: 0.8em;">TOTAL MARKS (Major 4):</strong> 
+            <span class="dots" style="font-size: 0.8em;">...{% if exam_records %}{{ exam_records.0.total_marks }}{% else %}N/A{% endif %}...</span>
+        {% endif %}
+        {% if class_name in allowed_classes %}
+            <strong style="font-size: 0.8em;">POSITION:</strong> 
+            <span class="dots" style="font-size: 0.8em;">...{{ current_position }}...</span>
+            <strong style="font-size: 0.8em;">OUT OF:</strong> 
+            <span class="dots" style="font-size: 0.8em;">...{{ total_students }}...</span>
+        {% else %}
+            <strong style="font-size: 0.8em; ">POSITION:</strong> 
+            <span class="dots" style="font-size: 0.8em;">.....................................{{ current_position }}...................................</span>
+            <strong style="font-size: 0.8em;">OUT OF:</strong> 
+            <span class="dots" style="font-size: 0.8em;">.....................................{{ total_students }}...................................</span>
+        {% endif %}
+        {% if class_name in allowed_classes %}
+            <strong style="font-size: 0.8em;">TOTAL AGG (Major 4):</strong> 
+            <span class="dots" style="font-size: 0.8em;">...{% if exam_records %}{{ exam_records.0.total_aggregate }}{% else %}N/A{% endif %}...</span>
+            <strong style="font-size: 0.8em;">DIV:</strong> 
+            <span class="dots" style="font-size: 0.8em;">...{% if exam_records %}{{ exam_records.0.div }}{% else %}N/A{% endif %}...</span>
+        {% endif %}
+    </div>
+    
+        <!--TEST SECTION-->
+        <h2 class="styled-header" style="font-size: 0.7em;">ASSESSMENT TESTS</h2>
+    
+        <table class="table table-bordered blue-text-table">
+            <thead>
+                <tr>
+                    <th style="font-size: 0.7em;">MONTH</th>
+                    <th style="font-size: 0.7em;">TERM</th>
+                    {% if is_primary_4_7 %}
+                        <th style="font-size: 0.7em;">MTC</th>
+                        <th style="font-size: 0.7em;">AGG</th>
+                        <th style="font-size: 0.7em;">ENG</th>
+                        <th style="font-size: 0.7em;">AGG</th>
+                        <th style="font-size: 0.7em;">SCI</th>
+                        <th style="font-size: 0.7em;">AGG</th>
+                        <th style="font-size: 0.7em;">SST</th>
+                        <th style="font-size: 0.7em;">AGG</th>
+                        <th style="font-size: 0.7em;">Total</th>
+                        <th style="font-size: 0.7em;">AGG</th>
+                        <th style="font-size: 0.7em;">DIV</th>
+                    {% else %}
+                        {% for subject in test_records.0.subject_marks %}
+                            <th style="font-size: 0.7em;">{{ subject.name }}</th>
+                        {% endfor %}
+                        <th style="font-size: 0.7em;">Total</th>
+                        <th style="font-size: 0.7em;">POS</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in test_records %}
+                    <tr>
+                        <td style="font-size: 0.7em;">{{ record.month }}</td>
+                        <td style="font-size: 0.7em;">{{ record.term }}</td>
+                        {% if is_primary_4_7 %}
+                            {% for subject in record.subject_marks %}
+                                <td style="font-size: 0.7em;">{{ subject.marks }}</td>
+                                <td style="font-size: 0.7em;">{{ subject.aggregate }}</td>
+                            {% endfor %}
+                            <td style="font-size: 0.7em;">{{ record.total_marks }}</td>
+                            <td style="font-size: 0.7em;">{{ record.total_aggregate }}</td>
+                            <td style="font-size: 0.7em;">{{ record.div }}</td>
+                        {% else %}
+                            {% for subject in record.subject_marks %}
+                                <td style="font-size: 0.7em;">{{ subject.marks }}</td>
+                            {% endfor %}
+                            <td style="font-size: 0.7em;">{{ record.total_marks }}</td>
+                            <td style="font-size: 0.7em;">{{ record.position }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Additional Remarks Section -->
+    <div class="remarks-section">
+        <div class="remark">
+            <strong style="font-size: 0.7em;">Class Teacher's Remarks:</strong> 
+            <span class="dots" style="font-size: 0.7em;">.........................................................................................................................................................................</span>
+        </div>
+        <div class="remark">
+            <span class="dots" style="font-size: 0.7em;">............................................................................</span>
+            <strong style="font-size: 0.7em;">Signature:</strong> 
+            <span class="dots" style="font-size: 0.7em;">.......................................................................................................................</span>
+        </div>
+        
+        <div class="remark">
+            <strong style="font-size: 0.7em;">Cleanliness:</strong> 
+            <span class="dots" style="font-size: 0.7em;">.............................................................</span>
+            <strong style="font-size: 0.7em;">Conduct:</strong> 
+            <span class="dots" style="font-size: 0.7em;">.................................................................................................................</span>
+        </div>
+        <div class="remark">
+            <strong style="font-size: 0.7em;">Co-curricular Activities:</strong> 
+            <span class="dots" style="font-size: 0.7em;">.............................................................................................................................................................................</span>
+        </div>
+        <div class="remark">
+            <strong style="font-size: 0.7em;">Headteacher's Remarks:</strong> 
+            <span class="dots" style="font-size: 0.7em;">............................................................................................................................................................................</span>
+        </div>     
+        <div class="remark">
+            <span class="dots" style="font-size: 0.7em;">............................................................................</span>
+            <strong style="font-size: 0.7em;">Signature:</strong> 
+            <span class="dots" style="font-size: 0.7em;">.......................................................................................................................</span>
+        </div> 
+    
+        <!--changing variables-->
+        <div class="remark">
+            <strong style="font-size: 0.7em;">Next Term begins on:</strong>
+            <span class="dots" style="font-size: 0.7em;">{{ next_term_start }}</span>
+            <strong style="font-size: 0.7em;">Ends on:</strong>
+            <span class="dots" style="font-size: 0.7em;">{{ next_term_end }}</span>
+        </div>
+    
+       <!-- Display the Fee for Primary Classes -->
+    <div class="remark">
+        <strong style="font-size: 0.7em;">Requirments:  1. Fees:</strong> 
+        <span class="dots" style="font-size: 0.7em;"> {{ student_fee }} </span>
+        <strong style="font-size: 0.7em;">2. Brooms:</strong>
+        <span class="dots" style="font-size: 0.7em;">.............{{ brooms_count }}.............</span>
+        <strong style="font-size: 0.7em;">2. Toilet Paper:</strong>
+        <span class="dots" style="font-size: 0.7em;">.............{{ toilet_paper_count }}.............</span>
+    </div>
+       
+        <div class="remark">
+            <strong style="font-size: 0.7em;">Other Requirements:</strong> 
+            <span class="dots" style="font-size: 0.7em;">................................................................................................................................................................................</span>
+        </div>
+    
+        <div class="remark">
+            <strong style="font-size: 0.7em;">This report was issued without any erasure or alteration whatsover</strong> 
+            
+        </div>
+        <div class="remark">
+            <strong style="font-size: 0.7em;">This report is not valid without the Headteacher's Stamp and Signature</strong> 
+        </div>
+    
+        <div class="footer">
+            <strong style="font-size: 0.7em;">God gives way and Wisdom</strong> 
+        </div>
+    </div>
+</body>
+
+</html>

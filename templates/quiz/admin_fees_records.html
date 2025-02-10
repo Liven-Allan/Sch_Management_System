@@ -1,0 +1,148 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-heading {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .fee-table {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      height: 100%;
+      border-collapse: collapse;
+      border: 1px solid #ddd;
+    }
+    table thead {
+      background-color: #007bff;
+      color: #fff;
+    }
+    table th, table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    .scroll-container {
+      flex: 1;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+
+<div class="container">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <span>Fees Records</span>
+            <span class="pull-right">
+                {% if selected_year_name %}
+                    <strong>Year: {{ selected_year_name }}</strong>
+                {% endif %}
+                {% if selected_term_name %}
+                    <strong>Term: {{ selected_term_name }}</strong>
+                {% endif %}
+            </span>
+        </div>
+
+       <!-- Print Record Button -->
+       <a href="{% url 'generate_summary_pdf' %}?year={{ selected_year }}&term={{ selected_term }}" class="btn btn-success">
+        Print Record
+    </a>
+    
+
+
+        <div class="fee-table">
+            <div class="scroll-container">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Class Name</th>
+                            <th>Total Students</th>
+                            <th>Total Fees</th>
+                            <th>Fees Balance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in fees_data %}
+                            <tr>
+                                <td>{{ record.class_name }}</td>
+                                <td>{{ record.total_students }}</td>
+                                <td>{{ record.total_fees }}</td>
+                                <td>{{ record.fees_balance }}</td>
+                                <td>
+                                    <a href="{% url 'fetch_balances' %}?class_name={{ record.class_name|urlencode }}" class="btn btn-primary">
+                                        View Balances
+                                    </a>
+                                    <a href="{% url 'generate_balances_pdf' %}?class_name={{ record.class_name|urlencode }}" class="btn btn-danger">
+                                        Print Balances
+                                    </a>      
+                                                               
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.generate-pdf').forEach(button => {
+        button.addEventListener('click', function() {
+            let className = this.getAttribute('data-class');
+            let url = `/generate_balances_pdf/?class_name=${encodeURIComponent(className)}`;
+    
+            fetch(url, { method: 'GET' })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to generate PDF');
+                return response.blob();
+            })
+            .then(blob => {
+                let link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `balances_${className}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+    </script>
+    
+
+{% endblock %}

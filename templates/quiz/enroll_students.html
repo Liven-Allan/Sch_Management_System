@@ -1,0 +1,222 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+<h2>Enroll Students for {{ year.year_name }} - {{ term.term_name }}</h2>
+
+<form method="post" id="enrollment-form">
+    {% csrf_token %}
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="assigned_class">Select Class:</label>
+        <select name="assigned_class" id="assigned_class" class="form-control">
+            <option value="">-- Select a class --</option>
+            {% for class in assigned_classes %}
+                <option value="{{ class.id }}">{{ class.class_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="student">Select Students:</label>
+        <div id="students-container" class="form-control" style="height: auto; padding: 10px; overflow-y: auto; max-height: 200px;">
+            <!-- Checkboxes will be populated here -->
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="enroll-button" disabled>Enroll</button>
+</form>
+
+<!-- Message Display Section -->
+<div id="messages-container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<h3>Enrolled Students</h3>
+<div class="container">
+    <div id="enrollments-container" class="scroll-container">
+        <p>Loading enrollments...</p>
+    </div>
+</div>
+
+<script>
+  document.getElementById('assigned_class').addEventListener('change', function () {
+    const classId = this.value;
+    const studentsContainer = document.getElementById('students-container');
+    const enrollButton = document.getElementById('enroll-button');
+
+    if (classId) {
+        fetch(`/get-students-by-class/${classId}/`)
+            .then(response => response.json())
+            .then(data => {
+                studentsContainer.innerHTML = '';
+                
+                if (data.students.length === 0) {
+                    studentsContainer.innerHTML = '<p>No students available.</p>';
+                    enrollButton.disabled = true;
+                    return;
+                }
+
+                data.students.forEach(student => {
+                    studentsContainer.innerHTML += `
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input student-checkbox" name="students" value="${student.id}" id="student-${student.id}">
+                            <label class="form-check-label" for="student-${student.id}">${student.name}</label>
+                        </div>
+                    `;
+                });
+
+                enrollButton.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error fetching students:', error);
+            });
+    } else {
+        studentsContainer.innerHTML = '<p>-- Select a class first --</p>';
+        enrollButton.disabled = true;
+    }
+  });
+
+   
+
+
+  // Hide messages after 3 seconds
+  setTimeout(() => {
+    const messagesContainer = document.getElementById('messages-container');
+    const alertMessages = messagesContainer.getElementsByClassName('alert');
+    Array.from(alertMessages).forEach(alert => {
+      alert.style.transition = "opacity 1s ease";
+      alert.style.opacity = 0;
+      setTimeout(() => alert.remove(), 1000); // Remove after fade out
+    });
+  }, 3000);
+
+  document.addEventListener('DOMContentLoaded', () => {
+      const enrollmentsContainer = document.getElementById('enrollments-container');
+      const yearId = "{{ year.id }}";
+      const termId = "{{ term.id }}";
+
+      fetch(`/get-enrollments/${yearId}/${termId}/`)
+          .then(response => response.json())
+          .then(data => {
+              const enrollmentsByClass = data.enrollments_by_class;
+              enrollmentsContainer.innerHTML = '';
+
+              if (Object.keys(enrollmentsByClass).length === 0) {
+                  enrollmentsContainer.innerHTML = '<p>No students enrolled yet.</p>';
+              } else {
+                  for (const [className, enrollments] of Object.entries(enrollmentsByClass)) {
+                      const classBox = document.createElement('div');
+                      classBox.classList.add('class-box');
+                      classBox.innerHTML = `
+                          <h3>${className}</h3>
+                          <table class="table table-hover">
+                              <thead>
+                                  <tr>
+                                      <th>No</th>
+                                      <th>Student Name</th>
+                                      <th>Action</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  ${enrollments.map((enrollment, index) => `
+                                      <tr>
+                                          <td>${index + 1}</td>  <!-- Automatically incrementing count -->
+                                          <td>${enrollment.student_name}</td>
+                                          <td>
+                                              <a href="#" class="btn btn-danger btn-sm" onclick="confirmUnenroll(${enrollment.enrollment_id})">Unenroll</a>
+                                          </td>
+                                      </tr>
+                                  `).join('')}
+                              </tbody>
+                          </table>
+                      `;
+                      enrollmentsContainer.appendChild(classBox);
+                  }
+              }
+          })
+          .catch(error => {
+              console.error('Error fetching enrollments:', error);
+              enrollmentsContainer.innerHTML = '<p>Error loading enrollments.</p>';
+          });
+  });
+
+  function confirmUnenroll(enrollmentId) {
+      const confirmed = confirm("Are you sure you want to unenroll this student?");
+      if (confirmed) {
+          // Redirect to the unenroll URL
+          window.location.href = `/unenroll/${enrollmentId}/`;
+      }
+  }
+</script>
+
+<style>
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .fee-table {
+        margin: 20px;
+    }
+    .fee-table h3 {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    table {
+        margin-top: 20px;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    table thead {
+        background-color: #007bff;
+        color: #fff;
+    }
+    table td, table th {
+        text-align: left;
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+    table img {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+    }
+    .panel-heading {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .scroll-container {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .class-box {
+        display: inline-block;
+        margin-right: 20px;
+        background-color: #f8f9fa;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    .form-group {
+    margin-bottom: 10px; /* Adds spacing between form elements */
+    }
+    #student {
+    width: 100%; /* Makes it take full available space */
+    min-height: 150px; /* Adjust height as necessary */
+}
+
+</style>
+
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "teacher/teacherbase.html" %}
+
+{% block content %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        a:link {
+            text-decoration: none;
+        }
+        h2, h4 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .container {
+            margin: 50px auto;
+        }
+        .btn-primary {
+            margin-bottom: 10px;
+        }
+        .panel {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .panel-heading {
+            background-color: #337ab7;
+            color: white;
+            text-align: center;
+        }
+        .panel-title {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .test-container {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<script>
+    $(document).ready(function() {
+        // Add CSRF token to all AJAX requests
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", $("input[name='csrfmiddlewaretoken']").val());
+                }
+            }
+        });
+
+        // Function to load test subjects
+        function loadTestSubjects(testId, studentId) {
+            $.ajax({
+                url: "{% url 'load-test-subjects' %}",
+                data: {
+                    test_id: testId,
+                    student_id: studentId,
+                },
+                success: function(data) {
+                    const subjectsDiv = $("#subjects-container");
+                    subjectsDiv.empty();
+                    data.subjects.forEach(subject => {
+                        subjectsDiv.append(`
+                            <div class="form-group subject-row">
+                                <label for="subject_${subject.id}">${subject.name}</label>
+                                <input type="number" name="subject_${subject.id}" class="form-control marks" required>
+                                <input type="hidden" class="subject-id" value="${subject.id}">
+                            </div>
+                        `);
+                    });
+                },
+                error: function() {
+                    alert("Failed to load subjects for the selected test.");
+                }
+            });
+        }
+
+        // Event listener for test selection
+        $("#test-select").on("change", function() {
+            const testId = $(this).val();
+            const studentId = "{{ student.id }}";
+            if (testId) {
+                loadTestSubjects(testId, studentId);
+            }
+        });
+
+        // Submit test marks
+        $("form").on("submit", function(e) {
+            e.preventDefault();
+
+            const subjectMarks = [];
+            $(".subject-row").each(function() {
+                const subjectId = $(this).find(".subject-id").val();
+                const marks = $(this).find(".marks").val();
+                subjectMarks.push({ subject_id: subjectId, marks: marks });
+            });
+
+            $.ajax({
+                url: "{% url 'add_test_marks' student.id %}",
+                method: "POST",
+                headers: {
+                    'X-CSRFToken': $("input[name='csrfmiddlewaretoken']").val(),
+                },
+                contentType: "application/json",
+                data: JSON.stringify({
+                    marks_type: "test",
+                    subject_marks: subjectMarks,
+                    test_id: $("#test-select").val(),
+                }),
+                success: function() {
+    alert("Exam marks saved successfully");
+    window.location.href = "{% url 'teacher-classes' %}"; // Redirect after success
+},
+                error: function() {
+                    alert("Error saving test marks");
+                }
+            });
+        });
+    });
+</script>
+
+<h2>Add Test Marks for {{ student.get_name }}</h2>
+
+<div class="container">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="test-select">Select Test</label>
+            <select id="test-select" name="test_id" class="form-control" required>
+                <option value="" disabled selected>Select Test</option>
+                {% for test in tests %}
+                    <option value="{{ test.id }}">{{ test.year }} - {{ test.month }} - {{ test.get_term_display }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div id="subjects-container"></div>
+        <button type="submit" class="btn btn-primary">Save Test Marks</button>
+    </form>
+</div>
+
+<a href="{% url 'teacher-classes' %}" class="btn btn-secondary" style="margin: 20px;">Back to Classes</a>
+
+{% endblock %}

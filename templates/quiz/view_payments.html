@@ -1,0 +1,106 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+{% load static %}
+<head>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  
+    <style>
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .fee-table {
+        margin: 20px;
+      }
+      .fee-table h3 {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      table {
+        margin-top: 20px;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      table thead {
+        background-color: #007bff;
+        color: #fff;
+      }
+      table td, table th {
+        text-align: left;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      table img {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+      }
+      .panel-heading {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      /* Add scrolling for the whole page */
+      .scroll-container {
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      .class-box {
+        display: inline-block;
+        margin-right: 20px;
+        background-color: #f8f9fa;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        /* Removed the width constraint so tables can retain their original size */
+      }
+    </style>
+  </head>
+
+  <div class="container">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Payments for {{ student_fee.student.user.get_full_name }}
+        </div>
+        <div class="fee-table">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Payment Date</th>
+                        <th>Payment Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.payment_date|date:"Y-m-d" }}</td>
+                            <td>{{ payment.payment_amount }}</td>
+                            <td>
+                                <a href="{% url 'edit_payment' payment.id %}" class="btn btn-warning btn-sm">Edit</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">No payments found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{% url 'student-fees' %}?year_id={{ request.GET.year_id }}&term_id={{ request.GET.term_id }}&class_index={{ request.GET.class_index }}" 
+            class="btn btn-primary">
+            Back to Student Fees
+         </a>
+         
+        </div>
+    </div>
+</div>
+
+{% endblock %}

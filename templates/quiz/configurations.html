@@ -1,0 +1,165 @@
+{% extends 'quiz/adminbase.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        a:link {
+            text-decoration: none;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .container {
+            margin: 50px auto;
+        }
+        .btn-primary {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            text-align: left;
+            padding: 8px;
+        }
+        table th {
+            background-color: #337ab7;
+            color: white;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<div class="container">
+    <h1 class="styled-header">Configurations</h1>
+
+    <form method="POST" class="form-horizontal">
+        {% csrf_token %}
+
+        <!-- School Pay Code Section -->
+        <div class="form-group">
+            <label for="school_pay_code" class="control-label col-sm-2">School Pay Code:</label>
+            <div class="col-sm-10">
+                <input type="text" id="school_pay_code" name="school_pay_code" class="form-control" 
+                       value="{{ school_pay_code }}" required>
+            </div>
+        </div>
+
+        <!-- Term Dates Section -->
+        <div class="form-group">
+            <label for="next_term_start" class="control-label col-sm-2">Next Term Begins On:</label>
+            <div class="col-sm-10">
+                <input type="date" id="next_term_start" name="next_term_start" class="form-control" 
+                       value="{{ next_term_start }}" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="next_term_end" class="control-label col-sm-2">Ends On:</label>
+            <div class="col-sm-10">
+                <input type="date" id="next_term_end" name="next_term_end" class="form-control" 
+                       value="{{ next_term_end }}" required>
+            </div>
+        </div>
+
+        <!-- Brooms and Toilet Paper Section -->
+        <div class="form-group">
+            <label for="brooms_count" class="control-label col-sm-2">Number of Brooms:</label>
+            <div class="col-sm-10">
+                <input type="number" id="brooms_count" name="brooms_count" class="form-control" 
+                       value="{{ brooms_count }}" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="toilet_paper_count" class="control-label col-sm-2">Number of Toilet Papers:</label>
+            <div class="col-sm-10">
+                <input type="number" id="toilet_paper_count" name="toilet_paper_count" class="form-control" 
+                       value="{{ toilet_paper_count }}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="primary_1_fee" class="control-label col-sm-2">Primary 1 Fee:</label>
+            <div class="col-sm-10">
+                <input type="number" id="primary_1_fee" name="primary_1_fee" class="form-control" 
+                       value="{{ primary_1_fee }}" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="primary_2_fee" class="control-label col-sm-2">Primary 2 Fee:</label>
+            <div class="col-sm-10">
+                <input type="number" id="primary_2_fee" name="primary_2_fee" class="form-control" 
+                       value="{{ primary_2_fee }}" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="primary_3_fee" class="control-label col-sm-2">Primary 3 Fee:</label>
+            <div class="col-sm-10">
+                <input type="number" id="primary_3_fee" name="primary_3_fee" class="form-control" 
+                       value="{{ primary_3_fee }}" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="primary_4_fee" class="control-label col-sm-2">Primary 4 Fee:</label>
+            <div class="col-sm-10">
+                <input type="number" id="primary_4_fee" name="primary_4_fee" class="form-control" 
+                       value="{{ primary_4_fee }}" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="primary_5_fee" class="control-label col-sm-2">Primary 5 Fee:</label>
+            <div class="col-sm-10">
+                <input type="number" id="primary_5_fee" name="primary_5_fee" class="form-control" 
+                       value="{{ primary_5_fee }}" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="primary_6_fee" class="control-label col-sm-2">Primary 6 Fee:</label>
+            <div class="col-sm-10">
+                <input type="number" id="primary_6_fee" name="primary_6_fee" class="form-control" 
+                       value="{{ primary_6_fee }}" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="primary_7_fee" class="control-label col-sm-2">Primary 7 Fee:</label>
+            <div class="col-sm-10">
+                <input type="number" id="primary_7_fee" name="primary_7_fee" class="form-control" 
+                       value="{{ primary_7_fee }}" required>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+        
+    </form>
+
+    {% if messages %}
+        <ul class="messages alert alert-info">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+
+{% endblock %}

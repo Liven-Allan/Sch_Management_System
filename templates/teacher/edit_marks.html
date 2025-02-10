@@ -1,0 +1,90 @@
+{% extends "teacher/teacherbase.html" %}
+
+{% block content %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        a:link {
+            text-decoration: none;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .container {
+            margin: 50px auto;
+        }
+        .btn-primary {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            text-align: left;
+            padding: 8px;
+        }
+        table th {
+            background-color: #337ab7;
+            color: white;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("Edit Marks Page Loaded");
+
+        // Optional: Add more interactivity or validation for form submission
+        $("form").on("submit", function (e) {
+            alert("Marks updated successfully!");
+        });
+    });
+</script>
+
+<h2>Edit Marks for {{ mark.student.get_name }}</h2>
+
+<div class="container">
+    <form method="POST">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for subject in subject_marks %}
+              <tr>
+                  <td>{{ subject.subject_name }}</td>
+                  <td>
+                      <input
+                          type="number"
+                          name="marks"
+                          value="{{ subject.marks }}"
+                          class="form-control"
+                          min="0"
+                          max="100"
+                          required
+                      />
+                  </td>
+              </tr>
+              {% endfor %}
+          </tbody>
+          
+        </table>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+
+<a href="{% url 'marked-students' %}" class="btn btn-secondary" style="margin: 20px;">Back to Marked Students</a>
+{% endblock %}

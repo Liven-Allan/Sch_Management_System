@@ -26,3 +26,43 @@ class QuestionForm(forms.ModelForm):
         widgets = {
             'question': forms.Textarea(attrs={'rows': 3, 'cols': 50})
         }
+
+# class
+class ClassForm(forms.ModelForm):
+    class Meta:
+        model = models.Class
+        fields = ['class_name']  # Add more fields if necessary
+        widgets = {
+            'class_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Class Name'})
+        }
+
+# subject
+class SubjectForm(forms.ModelForm):
+    class Meta:
+        model = models.Subject
+        fields = ['class_name', 'subject_name']
+        widgets = {
+            'class_name': forms.Select(attrs={'class': 'form-control'}),
+            'subject_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Subject Name'}),
+        }
+
+# exam
+class ExamForm(forms.ModelForm):
+    class Meta:
+        model = models.Exam
+        fields = ['year', 'term']
+        widgets = {
+            'year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Year'}),
+            'term': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+# test
+class TestForm(forms.ModelForm):
+    class Meta:
+        model = models.Test
+        fields = ['year', 'month', 'term']
+        widgets = {
+            'year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Year'}),
+            'month': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Month'}),
+            'term': forms.Select(attrs={'class': 'form-control'}),
+        }

@@ -1,0 +1,104 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        a:link {
+            text-decoration: none;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .container {
+            margin: 50px auto;
+        }
+        .btn-primary {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            text-align: left;
+            padding: 8px;
+        }
+        table th {
+            background-color: #337ab7;
+            color: white;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<h2>Test Marks for {{ mark.student.get_name }}</h2>
+
+<div class="container">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Term</th>
+                {% if class_name in "Primary 1, Primary 2, Primary 3" %}
+                    {% for subject in test_records.0.subject_marks %}
+                        <th>{{ subject.name }}</th>
+                    {% endfor %}
+                    <th>Total</th>
+                    <th>POS</th>
+                {% else %}
+                    <th>MTC</th>
+                    <th>AGG</th>
+                    <th>ENG</th>
+                    <th>AGG</th>
+                    <th>SCI</th>
+                    <th>AGG</th>
+                    <th>SST</th>
+                    <th>AGG</th>
+                    <th>Total</th>
+                    <th>AGG</th>
+                    <th>DIV</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for test_record in test_records %}
+                <tr>
+                    <td>{{ test_record.month }}</td>
+                    <td>{{ test_record.term }}</td>
+                    {% if class_name in "Primary 1, Primary 2, Primary 3" %}
+                        {% for subject in test_record.subject_marks %}
+                            <td>{{ subject.marks }}</td>
+                        {% endfor %}
+                        <td>{{ test_record.total_marks }}</td>
+                        <td>{{ test_record.position }}</td>
+                    {% else %}
+                    <td>{{ test_record.subject_marks.0.marks }}</td>
+                    <td>{{ test_record.subject_marks.0.aggregate }}</td>
+                    <td>{{ test_record.subject_marks.1.marks }}</td>
+                    <td>{{ test_record.subject_marks.1.aggregate }}</td>
+                    <td>{{ test_record.subject_marks.2.marks }}</td>
+                    <td>{{ test_record.subject_marks.2.aggregate }}</td>
+                    <td>{{ test_record.subject_marks.3.marks }}</td>
+                    <td>{{ test_record.subject_marks.3.aggregate }}</td>
+                    <td>{{ test_record.total_marks }}</td>
+                    <td>{{ test_record.total_aggregate }}</td>
+                    <td>{{ test_record.div }}</td>
+                    
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'admin_marked_students_tests' %}?selected_class={{ class_name }}" class="btn btn-secondary" style="margin: 20px;">Back to Marked Students</a>
+</div>
+
+{% endblock %}

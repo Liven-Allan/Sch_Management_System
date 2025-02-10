@@ -164,10 +164,13 @@
       <i style="left: 200px;margin-top: 17px;"class="fas fa-bars" id="sidebar_btn"></i>
     </label>
     <div class="left_area">
-      <h3>Online Quiz</h3>
+      <h3>SCHL SYSTEM</h3>
     </div>
     <div class="right_area">
-      <a href="/logout" class="logout_btn">Logout</a>
+      <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="logout_btn">Logout</button>
+      </form>
     </div>
   </header>
   <!--header area end-->
@@ -181,9 +184,15 @@
 
     </center>
 
-    <a href="/teacher/teacher-dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
-    <a href="/teacher/teacher-exam"><i class="fas fa-book"></i><span>Exam</span></a>
-    <a href="/teacher/teacher-question"><i class="fas fa-question-circle"></i><span>Questions</span></a>
+    <!--<a href="/teacher/teacher-dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a> -->
+    <a href="/teacher/teacher-classes"><i class="fas fa-users"></i><span>Classes</span></a>
+    <a href="{% url 'marked-students' %}">
+      <i class="fas fa-check-circle"></i><span>Marked Students(Exams)</span>
+    </a>
+    <a href="{% url 'marked-students-tests' %}">
+      <i class="fas fa-check-circle"></i><span>Marked Students (Tests)</span>
+    </a>
+    
   </div>
   <!--sidebar end-->
 
@@ -203,3 +212,12 @@
 </body>
 
 </html>
+
+<!--
+<div class="right_area">
+  <form method="POST" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="logout_btn">Logout</button>
+  </form>
+</div>
+-->

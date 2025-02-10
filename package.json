@@ -1,0 +1,15 @@
+{
+  "name": "sch_system",
+  "version": "1.0.0",
+  "description": "launch a django app in electron desktop ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sch_system": "electron --trace-warnings ."
+  },
+  "author": "liven",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^34.0.2"
+  }
+}

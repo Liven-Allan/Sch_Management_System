@@ -1,0 +1,100 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+<head>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  
+    <style>
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .fee-table {
+        margin: 20px;
+      }
+      .fee-table h3 {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      table {
+        margin-top: 20px;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      table thead {
+        background-color: #007bff;
+        color: #fff;
+      }
+      table td, table th {
+        text-align: left;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      table img {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+      }
+      .panel-heading {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <script id="balance_data" type="application/json">
+    {{ student_fee.balance|floatformat:2|safe }}
+</script>
+
+<div class="container">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>Record Payment for {{ student_fee.student.user.get_full_name }}</h3>
+        </div>
+        <div class="panel-body">
+            <form method="POST" id="payment-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="payment_amount">Payment Amount</label>
+                    <input type="number" name="payment_amount" id="payment_amount" step="0.01" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="payment_date">Payment Date</label>
+                    <input type="date" name="payment_date" id="payment_date" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Record Payment</button>
+                <a href="{% url 'student-fees' %}?year_id={{ request.GET.year_id }}&term_id={{ request.GET.term_id }}&class_index={{ request.GET.class_index }}" class="btn btn-secondary">
+                  Cancel
+              </a>              
+            </form>
+            <!-- Warning message area -->
+            <div id="warning-message" class="alert alert-danger mt-3" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Parse balance from embedded JSON
+    const balance = parseFloat(document.getElementById("balance_data").textContent);
+
+    document.getElementById("payment-form").addEventListener("submit", function (e) {
+        const paymentAmountInput = document.getElementById("payment_amount");
+        const warningMessage = document.getElementById("warning-message");
+        const paymentAmount = parseFloat(paymentAmountInput.value);
+
+        if (paymentAmount > balance) {
+            e.preventDefault();
+            warningMessage.style.display = "block";
+            warningMessage.textContent = `Payment amount cannot exceed the remaining balance of ${balance.toFixed(2)}.`;
+        } else {
+            warningMessage.style.display = "none";
+        }
+    });
+</script>
+{% endblock %}

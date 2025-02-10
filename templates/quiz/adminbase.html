@@ -66,6 +66,8 @@
       height: 100%;
       transition: 0.5s;
       transition-property: left;
+      overflow-y: auto; /* Enable vertical scrolling */
+      overflow-x: hidden; /* Prevent horizontal scrolling */
     }
 
     .sidebar .profile_image {
@@ -164,10 +166,13 @@
       <i style="left: 200px;margin-top: 17px;"class="fas fa-bars" id="sidebar_btn"></i>
     </label>
     <div class="left_area">
-      <h3>Online Quiz</h3>
+      <h3>SCHL SYSTEM</h3>
     </div>
     <div class="right_area">
-      <a href="/logout" class="logout_btn">Logout</a>
+      <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="logout_btn">Logout</button>
+      </form>
     </div>
   </header>
   <!--header area end-->
@@ -181,13 +186,19 @@
     </center>
 
     <a href="/admin-dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
-    <a href="/admin-teacher"><i class="fas fa-chalkboard-teacher"></i><span>Teacher</span></a>
-    <a href="/admin-student"><i class="fas fa-user-graduate"></i><span>Student</span></a>
-    <a href="/admin-course"><i class="fas fa-book"></i><span>Courses</span></a>
-    <a href="/admin-question"><i class="fas fa-question-circle"></i><span>Questions</span></a>
-    
-
-
+    <a href="/admin-classes"><i class="fas fa-book"></i><span>Classes</span></a>
+    <a href="{% url 'configurations' %}"><i class="fas fa-cogs"></i><span>Configurations</span></a>
+    <a href="{% url 'admin-teachers' %}"><i class="fas fa-chalkboard-teacher"></i><span>Teachers</span></a>
+    <a href="{% url 'admin-students' %}"><i class="fas fa-users"></i><span>Students</span></a>
+    <a href="{% url 'manage_academic_years' %}"><i class="fas fa-user-plus"></i><span>Enroll Students</span></a>
+    <a href="{% url 'student-fees' %}"><i class="fas fa-money-bill-alt"></i><span>Student Fees</span></a>
+    <a href="{% url 'fees_records' %}"><i class="fas fa-file-invoice-dollar"></i><span>Fees Records</span></a>
+    <a href="/assessments/"><i class="fas fa-file-alt"></i><span>Assessments</span></a>
+    <a href="/exam-results"><i class="fas fa-file-alt"></i><span>Exam Results</span></a>
+    <a href="{% url 'admin_marked_students_tests' %}"><i class="fas fa-file-alt"></i><span>Test Results</span></a>
+    <a href="{% url 'configurations' %}"><i class="fas fa-cogs"></i><span>Configurations</span></a>
+    <a href="{% url 'configurations' %}"><i class="fas fa-cogs"></i><span>Configurations</span></a>
+  
   </div>
   <!--sidebar end-->
 
@@ -207,3 +218,17 @@
 </body>
 
 </html>
+
+<!--
+ <div class="right_area">
+      <a href="/logout" class="logout_btn">Logout</a>
+    </div>
+
+    <div class="right_area">
+      <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="logout_btn">Logout</button>
+      </form>
+    </div>
+
+    -->

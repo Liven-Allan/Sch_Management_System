@@ -1,0 +1,373 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        a:link {
+            text-decoration: none;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .container {
+            margin: 50px auto;
+        }
+        .btn-primary {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            text-align: left;
+            padding: 8px;
+        }
+        table th {
+            background-color: #337ab7;
+            color: white;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        .subject-item,
+.marks-item {
+    border-bottom: 1px solid #ddd;  /* Adds a line under each subject and mark */
+    padding: 5px 0; /* Adds some space above and below each item */
+}
+
+.table-bordered th, .table-bordered td {
+    border: 1px solid #ddd; /* Keeps the table bordered */
+}
+
+.table-bordered {
+    border-collapse: collapse; /* Ensures the table borders merge correctly */
+}
+
+.position-summary {
+    margin-top: 20px;
+    
+}
+
+.dots {
+    margin: 0 10px; /* Adjust the number to increase/decrease the space between "POSITION" and "OUT OF" */
+    white-space: nowrap;
+}
+
+.position-summary strong {
+    margin-right: 10px; /* Adds space between the label and the dots */
+}
+
+.position-summary .dots:first-of-type {
+    margin-right: 50px; /* Increase space between "POSITION" and "OUT OF" */
+}
+.styled-header {
+    color: red; /* Red text color */
+    border: 2px solid blue; /* Blue border around the text */
+    display: inline-block; /* Make the border wrap around the text */
+    padding: 10px 20px; /* Add padding for spacing between the text and border */
+    text-align: center; /* Center align the text inside the border */
+    margin-left: 30%;
+}
+
+.footer{
+    text-align: center;
+}
+
+.blue-text-table th, 
+    .blue-text-table td {
+        color: blue; /* Apply blue color to all text in the table */
+    }
+
+    .remarks-section strong,
+    .remarks-section .dots {
+        color: blue; /* Set text and dots color to blue */
+    }  
+    
+    .position-summary strong,
+    .position-summary .dots {
+        color: blue; /* Set text and dots color to blue */
+    }
+    .position-summary .text-on-dashed {
+        color: blue; /* Set the text color to blue */
+    }
+
+    .position-summary .dashed-line {
+       
+        display: inline-block;
+        width: 100%;
+        margin-top: 5px; /* Optional: Adjust spacing if needed */
+    }    
+   
+    .current-date {
+        color: blue; /* Set the date text color to blue */
+        font-weight: bold; /* Optional: Make the text bold */
+    }    
+
+    .footer strong {
+        color: blue; /* Set text color to blue */
+    }
+    .footer.school-name strong {
+        color: red; /* Set text color to red */
+        font-size: 2.0em; /* Make the font size larger */
+        font-weight: bold; /* Ensure the text remains bold */
+        text-align: center; /* Center align the text if needed */
+        display: block; /* Ensures it spans the full width for alignment */
+    }
+    
+    .container {
+        margin-top: 5px; /* Adjust to reduce space between container and footer */
+    }
+
+    </style>
+</head>
+
+<div class="footer">
+    <img src="{% static 'image/sch.jpg' %}" alt="School Badge" style="float: left; width: 100px; height: auto; margin-right: 10px;">
+    <div>
+        <div class="footer school-name">
+            <strong>ABESTHER KINDERGARTEN AND PRIMARY SCHOOL</strong> 
+        </div>
+        <div class="footer">
+            <strong>P.O. Box 71407, Kampala Ndejje - Kyadondo Mirimu Cell Makindye Ssabagabo Municipality</strong> 
+        </div>
+        <div class="footer">
+            <strong>Tel: 0772-409738, 0704 409738, 0774906050 Email: abestherblessedschool@yahoo.com</strong> 
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 class="styled-header">TERMINAL REPORT</h2>
+        <span class="current-date">DATE: {{ current_date }}</span>  <!-- Display the current date here -->
+    </div>
+    <div class="position-summary" style="position: relative; white-space: nowrap;">
+        <span class="text-on-dashed">NAME: {{ mark.student.user.first_name }} {{ mark.student.user.last_name }}</span>
+    </div>
+    <div class="position-summary" style="position: relative; white-space: nowrap;">
+        <span class="text-on-dashed">CLASS: {{ class_name }}</span>
+    </div>
+    <div class="position-summary" style="position: relative; white-space: nowrap;">
+        <span class="text-on-dashed">TERM: {{ exam_records.0.term }}</span>
+    </div>
+    <div class="position-summary" style="position: relative; white-space: nowrap;">
+        <span class="text-on-dashed">SCHOOL PAY CODE: {{ school_pay_code }}</span>
+    </div>
+    <div class="position-summary" style="position: relative; white-space: nowrap;">
+        <span class="text-on-dashed">LEARNER'S LIN: {{ student_lin }}</span>
+    </div>
+    <table class="table table-bordered blue-text-table">
+        <thead>
+            <tr>
+                <th>SUBJECTS</th>
+                <th>FULL MARKS</th>
+                <th>MARKS GAINED</th>
+                {% if show_agg_column %}
+                    <th>AGG</th> <!-- Only show if the condition is true -->
+                {% endif %}
+                <th>REMARKS</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for exam_record in exam_records %}
+                <tr>
+                    <td>
+                        {% for subject in exam_record.subject_marks %}
+                            <div class="subject-item">{{ subject.name }}</div>
+                        {% endfor %}
+                        <div class="subject-item"><strong>TOTAL</strong></div>
+                    </td>
+                    <td>
+                        {% for subject in exam_record.subject_marks %}
+                            <div class="marks-item">100</div>
+                        {% endfor %}
+                        <div class="marks-item"><strong>{{ exam_record.total_full_marks }}</strong></div>
+                    </td>
+                    <td>
+                        {% for subject in exam_record.subject_marks %}
+                            <div class="marks-item">{{ subject.marks }}</div>
+                        {% endfor %}
+                        <div class="marks-item"><strong>{{ exam_record.total_marks }}</strong></div>
+                    </td>
+                    {% if show_agg_column %}
+                        <td> <!-- New AGG column -->
+                            {% for subject in exam_record.subject_marks %}
+                                <div class="marks-item">{{ subject.aggregate }}</div>
+                            {% endfor %}
+                            <div class="marks-item"><strong>{{ exam_record.total_aggregate }}</strong></div>
+                        </td>
+                    {% endif %}
+                    <td>
+                        {% for subject in exam_record.subject_marks %}
+                            <div class="marks-item">{{ subject.remarks }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+ <!-- Summary Section -->
+ <div class="position-summary" style="white-space: nowrap;">
+    {% if class_name in allowed_classes %}
+        <strong>TOTAL MARKS (Major 4):</strong> 
+        <span class="dots">..........{% if exam_records %}{{ exam_records.0.total_marks }}{% else %}N/A{% endif %}..........</span>
+    {% endif %}
+    {% if class_name in allowed_classes %}
+        <strong>POSITION:</strong> 
+        <span class="dots">..........{{ current_position }}..........</span>
+        <strong>OUT OF:</strong> 
+        <span class="dots">..........{{ total_students }}..........</span>
+    {% else %}
+        <strong>POSITION:</strong> 
+        <span class="dots">...............................................{{ current_position }}.............................................</span>
+        <strong>OUT OF:</strong> 
+        <span class="dots">...............................................{{ total_students }}.............................................</span>
+    {% endif %}
+    {% if class_name in allowed_classes %}
+        <strong>TOTAL AGG (Major 4):</strong> 
+        <span class="dots">..........{% if exam_records %}{{ exam_records.0.total_aggregate }}{% else %}N/A{% endif %}..........</span>
+        <strong>DIV:</strong> 
+        <span class="dots">..........{% if exam_records %}{{ exam_records.0.div }}{% else %}N/A{% endif %}..........</span>
+    {% endif %}
+</div>
+
+    <!--TEST SECTION-->
+    <h2 class="styled-header">ASSESSMENT TESTS</h2>
+
+    <table class="table table-bordered blue-text-table">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Term</th>
+                {% if is_primary_4_7 %}
+                    <th>MTC</th>
+                    <th>AGG</th>
+                    <th>ENG</th>
+                    <th>AGG</th>
+                    <th>SCI</th>
+                    <th>AGG</th>
+                    <th>SST</th>
+                    <th>AGG</th>
+                    <th>Total</th>
+                    <th>AGG</th>
+                    <th>DIV</th>
+                {% else %}
+                    {% for subject in test_records.0.subject_marks %}
+                        <th>{{ subject.name }}</th>
+                    {% endfor %}
+                    <th>Total</th>
+                    <th>POS</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in test_records %}
+                <tr>
+                    <td>{{ record.month }}</td>
+                    <td>{{ record.term }}</td>
+                    {% if is_primary_4_7 %}
+                        {% for subject in record.subject_marks %}
+                            <td>{{ subject.marks }}</td>
+                            <td>{{ subject.aggregate }}</td>
+                        {% endfor %}
+                        <td>{{ record.total_marks }}</td>
+                        <td>{{ record.total_aggregate }}</td>
+                        <td>{{ record.div }}</td>
+                    {% else %}
+                        {% for subject in record.subject_marks %}
+                            <td>{{ subject.marks }}</td>
+                        {% endfor %}
+                        <td>{{ record.total_marks }}</td>
+                        <td>{{ record.position }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Additional Remarks Section -->
+<div class="remarks-section">
+    <div class="remark">
+        <strong>Class Teacher's Remarks:</strong> 
+        <span class="dots">..................................................................................................................................................................................................................................................</span>
+    </div>
+    <div class="remark">
+        <span class="dots">.............................................................................................................................................................................................................</span>
+        <strong>Signature:</strong> 
+        <span class="dots">..........................................................</span>
+    </div>
+    
+    <div class="remark">
+        <strong>Cleanliness:</strong> 
+        <span class="dots">........................................................................................................................</span>
+        <strong>Conduct:</strong> 
+        <span class="dots">...........................................................................................................................</span>
+    </div>
+    <div class="remark">
+        <strong>Co-curricular Activities:</strong> 
+        <span class="dots">......................................................................................................................................................................................................................................................</span>
+    </div>
+    <div class="remark">
+        <strong>Headteacher's Remarks:</strong> 
+        <span class="dots">.....................................................................................................................................................................................................................................................</span>
+    </div>     
+    <div class="remark">
+        <span class="dots">.............................................................................................................................................................................................................</span>
+        <strong>Signature:</strong> 
+        <span class="dots">..........................................................</span>
+    </div> 
+
+    <!--changing variables-->
+    <div class="remark">
+        <strong>Next Term begins on:</strong>
+        <span class="dots">{{ next_term_start }}</span>
+        <strong>Ends on:</strong>
+        <span class="dots">{{ next_term_end }}</span>
+    </div>
+
+   <!-- Display the Fee for Primary Classes -->
+<div class="remark">
+    <strong>Requirments:  1. Fees:</strong> 
+    <span class="dots"> {{ student_fee }} </span>
+</div>
+    <div class="remark">
+        <strong>2. Brooms:</strong>
+        <span class="dots">.............................{{ brooms_count }}..................</span>
+        <strong>2. Toilet Paper:</strong>
+        <span class="dots">.............................{{ toilet_paper_count }}..................</span>
+    </div>
+    <div class="remark">
+        <strong>Other Requirements:</strong> 
+        <span class="dots">...........................................................................................................................................................................................................................................................</span>
+    </div>
+
+    <div class="remark">
+        <strong>This report was issued without any erasure or alteration whatsover</strong> 
+        
+    </div>
+    <div class="remark">
+         
+        <strong>This report is not valid without the Headteacher's Stamp and Signature</strong> 
+    </div>
+
+    <div class="footer">
+        <strong>God gives way and Wisdom</strong> 
+    </div>
+
+    <!-- Back Button -->
+    <a href="{% url 'exam-results' %}?selected_class={{ selected_class }}" class="btn btn-secondary" style="margin: 20px;">Back to Exam Results</a>
+
+</div>
+
+
+
+{% endblock %}

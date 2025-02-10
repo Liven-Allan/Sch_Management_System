@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        a:link {
+            text-decoration: none;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .container {
+            margin: 50px auto;
+        }
+        .btn-primary {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            text-align: left;
+            padding: 8px;
+        }
+        table th {
+            background-color: #337ab7;
+            color: white;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Test Marks for {{ student_name }}</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Term</th>
+                {% if class_name in "Primary 1, Primary 2, Primary 3" %}
+                    {% for subject in subjects %}
+                        <th>{{ subject }}</th>
+                    {% endfor %}
+                    <th>Total</th>
+                    <th>POS</th>
+                {% elif class_name in "Primary 4, Primary 5, Primary 6, Primary 7" %}
+                    {% for subject in subjects %}
+                        <th>{{ subject }}</th>
+                        <th>AGG</th>
+                    {% endfor %}
+                    <th>Total</th>
+                    <th>AGG</th>
+                    <th>DIV</th>
+                {% else %}
+                    {% for subject in subjects %}
+                        <th>{{ subject }}</th>
+                        <th>AGG</th>
+                    {% endfor %}
+                    <th>Total</th>
+                    <th>AGG</th>
+                    <th>DIV</th>
+                    <th>POS</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for test_record in test_records %}
+                <tr>
+                    <td>{{ test_record.month }}</td>
+                    <td>{{ test_record.term }}</td>
+                    {% if class_name in "Primary 1, Primary 2, Primary 3" %}
+                        {% for subject in subjects %}
+                            <td>
+                                {% for subject_mark in test_record.subject_marks %}
+                                    {% if subject_mark.name == subject %}
+                                        {{ subject_mark.marks }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                        <td>{{ test_record.total_marks }}</td>
+                        <td>{{ test_record.position }}</td>
+                    {% elif class_name in "Primary 4, Primary 5, Primary 6, Primary 7" %}
+                        {% for subject in subjects %}
+                            <td>
+                                {% for subject_mark in test_record.subject_marks %}
+                                    {% if subject_mark.name == subject %}
+                                        {{ subject_mark.marks }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for subject_mark in test_record.subject_marks %}
+                                    {% if subject_mark.name == subject %}
+                                        {{ subject_mark.aggregate }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                        <td>{{ test_record.total_marks }}</td>
+                        <td>{{ test_record.total_aggregate }}</td>
+                        <td>{{ test_record.div }}</td>
+                    {% else %}
+                        {% for subject in subjects %}
+                            <td>
+                                {% for subject_mark in test_record.subject_marks %}
+                                    {% if subject_mark.name == subject %}
+                                        {{ subject_mark.marks }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for subject_mark in test_record.subject_marks %}
+                                    {% if subject_mark.name == subject %}
+                                        {{ subject_mark.aggregate }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                        <td>{{ test_record.total_marks }}</td>
+                        <td>{{ test_record.total_aggregate }}</td>
+                        <td>{{ test_record.div }}</td>
+                        <td>{{ test_record.position }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>

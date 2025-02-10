@@ -1,0 +1,65 @@
+{% extends 'quiz/adminbase.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        a:link {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<h2 class="text-center text-primary">Teacher Signup</h2>
+<form method="POST" autocomplete="off" enctype="multipart/form-data" style="margin: 100px; margin-top: 0;">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            <label for="username">Username</label>
+            {% render_field userForm.username class="form-control" placeholder="Username" %}
+        </div>
+        <div class="col-md-6">
+            <label for="password">Password</label>
+            {% render_field userForm.password class="form-control" placeholder="Password" %}
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-6">
+            <label for="first_name">First Name</label>
+            {% render_field userForm.first_name class="form-control" placeholder="First Name" %}
+        </div>
+        <div class="col-md-6">
+            <label for="last_name">Last Name</label>
+            {% render_field userForm.last_name class="form-control" placeholder="Last Name" %}
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-6">
+            <label for="mobile">Mobile</label>
+            {% render_field teacherForm.mobile class="form-control" placeholder="Mobile" %}
+        </div>
+        <div class="col-md-6">
+            <label for="address">Address</label>
+            {% render_field teacherForm.address class="form-control" placeholder="Address" %}
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-12">
+            <label for="assigned_classes">Classes</label>
+            {{ teacherForm.assigned_classes }}  <!-- Let Django handle rendering -->
+        </div>
+    </div>
+    
+    
+    <div class="mb-3">
+        <label for="profile_pic">Profile Picture</label>
+        {% render_field teacherForm.profile_pic class="form-control" %}
+    </div>
+    <button type="submit" class="btn btn-primary">Sign Up</button>
+</form>
+<br><br><br>
+{% endblock %}

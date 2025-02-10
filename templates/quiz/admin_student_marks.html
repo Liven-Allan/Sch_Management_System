@@ -1,0 +1,84 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <style>
+    a:link {
+      text-decoration: none;
+    }
+    h6 {
+      text-align: center;
+    }
+    .row {
+      margin: 100px;
+    }
+    .class-group {
+      display: none;
+    }
+    .class-group.active {
+      display: block;
+    }
+    .class-navigation {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .class-navigation button {
+      margin: 5px;
+    }
+    table img {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+    }
+    table {
+      margin-top: 20px;
+    }
+    table td {
+      text-align: left;
+    }
+  </style>
+</head>
+
+<div class="container">
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+    {% endif %}
+    <h4>Marks for {{ student.get_name }} - {{ year }} Term {{ term }}</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>MTC</th>
+                <th>ENG</th>
+                <th>LIT 1A</th>
+                <th>C.R.E</th>
+                <th>READ</th>
+                <th>LUG</th>
+                <th>WRITING</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mark in marks %}
+            <tr>
+                <td>{{ mark.month }}</td>
+                <td>{{ mark.MATHEMATICS }}</td>
+                <td>{{ mark.ENGLISH }}</td>
+                <td>{{ mark.LITERACY_1 }}</td>
+                <td>{{ mark.RELIGIOUS_EDUCATION }}</td>
+                <td>{{ mark.READING }}</td>
+                <td>{{ mark.LUGANDA }}</td>
+                <td>{{ mark.WRITING }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

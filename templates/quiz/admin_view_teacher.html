@@ -1,6 +1,6 @@
 {% extends 'quiz/adminbase.html' %}
 {% block content %}
-{%load static%}
+{% load static %}
 
 <head>
   <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -19,42 +19,106 @@
     .row {
       margin: 100px;
     }
+
+    .class-group {
+      display: none;
+    }
+
+    .class-group.active {
+      display: block;
+    }
+
+    .class-navigation {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
-<br><br>
+
+<!-- Register & Approve Pending Teachers Button -->
+<div class="text-right" style="margin: 10px;">
+  <!-- Register Teacher Button -->
+  <a href="{% url 'register-teacher' %}" class="btn btn-primary">
+    <span class="glyphicon glyphicon-plus"></span> Register Teacher
+  </a>
+</div>
+
 <div class="container">
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h6 class="panel-title">Teachers</h6>
     </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
 
-          <th>Name</th>
-          <th>Profile Picture</th>
-          <th>Mobile</th>
-          <th>Address</th>
-         
-          <th>Update</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      {% for t in teachers %}
-      <tr>
+    <!-- Class navigation buttons -->
+    <div class="class-navigation">
+      <button id="prev-class" class="btn btn-default"> &lt; </button>
+      <button id="next-class" class="btn btn-default"> &gt; </button>
+    </div>
 
-        <td> {{t.get_name}}</td>
-        <td> <img src="{% static t.profile_pic.url %}" alt="Profile Pic" height="40px" width="40px" /></td>
-        <td>{{t.mobile}}</td>
-        <td>{{t.address}}</td>
-        
-        <td><a class="btn btn-primary btn-xs" href="{% url 'update-teacher' t.id  %}"><span class="glyphicon glyphicon-edit"></span></a></td>
-        <td><a class="btn btn-danger btn-xs" href="{% url 'delete-teacher' t.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
-      </tr>
+    <!-- Grouped teachers by class -->
+    <div id="class-container">
+      {% for class_name, teachers_in_class in teachers_by_class.items %}
+      <div class="class-group" data-class="{{ class_name }}">
+        <h4>{{ class_name }}</h4>
+        <table class="table table-hover" id="dev-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Profile Picture</th>
+              <th>Mobile</th>
+              <th>Address</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in teachers_in_class %}
+            <tr>
+              <td>{{ t.get_name }}</td>
+              <td>
+                {% if t.profile_pic %}
+                    <img src="{{ t.profile_pic.url }}" alt="Profile Pic" height="40px" width="40px" />
+                {% else %}
+                    <span>No Image</span> <!-- Or use a default image -->
+                {% endif %}
+            </td>
+            
+              <td>{{ t.mobile }}</td>
+              <td>{{ t.address }}</td>
+              <td><a class="btn btn-danger btn-xs" href="{% url 'delete-teacher' t.id %}"><span class="glyphicon glyphicon-trash"></span></a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
       {% endfor %}
-    </table>
+    </div>
   </div>
 </div>
 
-<br><br><br><br><br><br>
+<script>
+  $(document).ready(function() {
+    // Initialize the first class group to be visible
+    var classGroups = $('.class-group');
+    var currentIndex = 0;
+    $(classGroups[currentIndex]).addClass('active');
+
+    // Show next class group
+    $('#next-class').click(function() {
+      if (currentIndex < classGroups.length - 1) {
+        $(classGroups[currentIndex]).removeClass('active');
+        currentIndex++;
+        $(classGroups[currentIndex]).addClass('active');
+      }
+    });
+
+    // Show previous class group
+    $('#prev-class').click(function() {
+      if (currentIndex > 0) {
+        $(classGroups[currentIndex]).removeClass('active');
+        currentIndex--;
+        $(classGroups[currentIndex]).addClass('active');
+      }
+    });
+  });
+</script>
+
 {% endblock content %}

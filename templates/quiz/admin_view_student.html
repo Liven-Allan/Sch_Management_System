@@ -1,60 +1,143 @@
 {% extends 'quiz/adminbase.html' %}
 {% block content %}
-{%load static%}
+{% load static %}
 
 <head>
   <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
-  <style media="screen">
+  <style>
     a:link {
       text-decoration: none;
     }
-
     h6 {
       text-align: center;
     }
-
     .row {
       margin: 100px;
     }
+    .class-group {
+      display: none;
+    }
+    .class-group.active {
+      display: block;
+    }
+    .class-navigation {
+      margin-bottom: 20px;
+      text-align: center;
+    }
   </style>
 </head>
-<br><br>
+
+<!-- Register & Add Student Button -->
+<div class="text-right" style="margin: 10px;">
+  <a href="{% url 'register-student' %}" class="btn btn-primary">
+    <span class="glyphicon glyphicon-plus"></span> Register Student
+  </a>
+</div>
+
 <div class="container">
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h6 class="panel-title">Students</h6>
     </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
 
-          <th>Name</th>
-          <th>Profile Picture</th>
-          <th>Mobile</th>
-          <th>Address</th>
-         
-          <th>Update</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      {% for t in students %}
-      <tr>
+    <!-- Display Current Class Name -->
+    <div class="text-center">
+      <h3 id="class-name" style="font-weight: bold;"></h3>
+    </div>
 
-        <td> {{t.get_name}}</td>
-        <td> <img src="{% static t.profile_pic.url %}" alt="Profile Pic" height="40px" width="40px" /></td>
-        <td>{{t.mobile}}</td>
-        <td>{{t.address}}</td>
-        
-        <td><a class="btn btn-primary btn-xs" href="{% url 'update-student' t.id  %}"><span class="glyphicon glyphicon-edit"></span></a></td>
-        <td><a class="btn btn-danger btn-xs" href="{% url 'delete-student' t.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
-      </tr>
+    <!-- Class Navigation Buttons -->
+    <div class="text-center" style="margin-bottom: 15px;">
+      <button id="prev-class" class="btn btn-default"> &lt; Previous </button>
+      <button id="next-class" class="btn btn-default"> Next &gt; </button>
+    </div>
+
+    <!-- Grouped students by class -->
+    <div id="class-container">
+      {% for class_name, students_in_class in students_by_class.items %}
+      <div class="class-group" data-class="{{ class_name }}">
+        <table class="table table-hover" id="dev-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Profile Picture</th>
+              <th>Mobile</th>
+              <th>Address</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in students_in_class %}
+            <tr>
+              <td>{{ s.get_name }}</td>
+              <td>
+                {% if s.profile_pic %}
+                  <img src="{% static s.profile_pic.url %}" alt="Profile Pic" height="40px" width="40px">
+                {% else %}
+                  <img src="{% static 'default-profile-pic.jpg' %}" alt="No Profile Pic" height="40px" width="40px">
+                {% endif %}
+              </td>
+              
+              <td>{{ s.mobile }}</td>
+              <td>{{ s.address }}</td>
+              <td>
+                <a class="btn btn-danger btn-xs" 
+                   href="{% url 'delete-student' s.id %}?class_name={{ s.assigned_class.class_name }}">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </a>
+            </td>
+            
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
       {% endfor %}
-    </table>
+    </div>
   </div>
 </div>
+
+<script>
+ $(document).ready(function() {
+  var classGroups = $('.class-group');
+  var currentIndex = 0;
+
+  // Function to update view
+  function updateView() {
+    classGroups.removeClass('active').hide();
+    $(classGroups[currentIndex]).addClass('active').show();
+    $('#class-name').text($(classGroups[currentIndex]).attr('data-class'));
+
+    // Disable buttons if only one class exists
+    $('#prev-class').prop('disabled', currentIndex === 0);
+    $('#next-class').prop('disabled', currentIndex === classGroups.length - 1);
+  }
+
+  // Show first class by default
+  if (classGroups.length > 0) {
+    updateView();
+  }
+
+  // Show next class
+  $('#next-class').click(function() {
+    if (currentIndex < classGroups.length - 1) {
+      currentIndex++;
+      updateView();
+    }
+  });
+
+  // Show previous class
+  $('#prev-class').click(function() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateView();
+    }
+  });
+});
+</script>
+
 
 <br><br><br><br><br><br>
 {% endblock content %}

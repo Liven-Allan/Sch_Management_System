@@ -1,0 +1,158 @@
+{% extends 'teacher/teacherbase.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <style>
+      a:link {
+          text-decoration: none;
+      }
+      h6 {
+          text-align: center;
+      }
+      .row {
+          margin: 100px;
+      }
+      .class-group {
+          display: none;
+      }
+      .class-group.active {
+          display: block;
+      }
+      .class-navigation {
+          margin-bottom: 20px;
+          text-align: center;
+      }
+      .class-navigation button {
+          margin: 5px;
+      }
+      table img {
+          height: 40px;
+          width: 40px;
+          border-radius: 50%;
+      }
+      table {
+          margin-top: 20px;
+      }
+      table td {
+          text-align: left;
+      }
+
+      /* Specifically target the subject column and its cells */
+      table td:nth-child(4) {
+          text-align: left;
+      }
+  </style>
+</head>
+
+<div class="container">
+  <div class="panel panel-primary">
+      <div class="panel-heading">
+          <h6 class="panel-title">Marked Students (Tests)</h6>
+      </div>
+
+      <!-- Class navigation buttons -->
+      <div class="class-navigation">
+          <button id="prev-class" class="btn btn-default"> &lt; </button>
+          <button id="next-class" class="btn btn-default"> &gt; </button>
+      </div>
+
+      <!-- Grouped students by class -->
+      <div id="class-container">
+          {% for class_name, students in marked_students_by_class.items %}
+          <div class="class-group" data-class="{{ class_name }}">
+              <h4>{{ class_name }} </h4>
+              <p>
+                <form method="post" action="{% url 'delete-all-marks' class_name=class_name %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmDelete('{{ class_name }}')">
+                        Delete All
+                    </button>
+                </form>
+            </p>
+              <table class="table table-hover" id="dev-table">
+                  <thead>
+                      <tr>
+                          <th>Name</th>
+                          <th>Profile Picture</th>
+                          <th>Test</th>
+                          <th>Subject</th>
+                          <th>Action</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.name }}</td>
+                        <td>
+                            {% if student.profile_pic %}
+                            <img src="{{ student.profile_pic }}" alt="Profile Pic">
+                            {% else %}
+                            <span>No Image</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ student.test }}</td>
+                        <td>
+                            {% if student.subject_marks %}
+                                {% for subject_name, mark in student.subject_marks.items %}
+                                    <p>{{ subject_name }}: {{ mark }}</p>
+                                {% endfor %}
+                            {% else %}
+                                <span>No Marks</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <!-- Edit Marks Button -->
+                            <a href="{% url 'edit-marks' student.mark.id %}" class="btn btn-warning btn-sm">Edit Marks</a>
+                            <form method="post" action="{% url 'delete-mark' student.mark.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirmDeleteRecord('{{ student.name }}', '{{ student.exam }}')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    var classGroups = $('.class-group');
+    var currentIndex = 0;
+    $(classGroups[currentIndex]).addClass('active');
+
+    $('#next-class').click(function() {
+      if (currentIndex < classGroups.length - 1) {
+        $(classGroups[currentIndex]).removeClass('active');
+        currentIndex++;
+        $(classGroups[currentIndex]).addClass('active');
+      }
+    });
+
+    $('#prev-class').click(function() {
+      if (currentIndex > 0) {
+        $(classGroups[currentIndex]).removeClass('active');
+        currentIndex--;
+        $(classGroups[currentIndex]).addClass('active');
+      }
+    });
+  });
+  function confirmDelete(className) {
+        return confirm(`Are you sure you want to delete all marks for class "${className}"? This action cannot be undone.`);
+    }
+    function confirmDeleteRecord(studentName, examName) {
+      const confirmation = confirm(
+          `Are you sure you want to delete the marks for "${studentName}" from the exam "${examName}"? This action cannot be undone.`
+      );
+      return confirmation; // Only proceed if the user confirms
+  }
+</script>
+
+{% endblock content %}

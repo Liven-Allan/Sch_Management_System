@@ -1,0 +1,125 @@
+{% extends "teacher/teacherbase.html" %}
+
+{% block content %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .container {
+            margin: 50px auto;
+        }
+        .btn-primary {
+            margin-top: 20px;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<script>
+    $(document).ready(function() {
+        // Add CSRF token to all AJAX requests
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^GET|HEAD|OPTIONS|TRACE$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", $("input[name='csrfmiddlewaretoken']").val());
+                }
+            }
+        });
+
+        // Function to load exam subjects
+        function loadSubjects(examId, studentId) {
+            $.ajax({
+                url: "{% url 'load-subjects' %}",
+                data: {
+                    exam_id: examId,
+                    student_id: studentId,
+                },
+                success: function(data) {
+                    const subjectsDiv = $("#subjects-container");
+                    subjectsDiv.empty();
+                    data.subjects.forEach(subject => {
+                        subjectsDiv.append(`
+                            <div class="form-group subject-row">
+                                <label for="subject_${subject.id}">${subject.name}</label>
+                                <input type="number" name="subject_${subject.id}" class="form-control marks" required>
+                                <input type="hidden" class="subject-id" value="${subject.id}">
+                            </div>
+                        `);
+                    });
+                }
+            });
+        }
+
+        // Event listener for exam selection
+        $("#exam-select").on("change", function() {
+            const examId = $(this).val();
+            const studentId = "{{ student.id }}";
+            if (examId) {
+                loadSubjects(examId, studentId);
+            }
+        });
+
+        // Submit exam marks
+$("form").on("submit", function(e) {
+    e.preventDefault();
+
+    const subjectMarks = [];
+    $(".subject-row").each(function() {
+        const subjectId = $(this).find(".subject-id").val();
+        const marks = $(this).find(".marks").val();
+        subjectMarks.push({ subject_id: subjectId, marks: marks });
+    });
+
+    $.ajax({
+        url: "{% url 'add_marks' student.id %}",
+        method: "POST",
+        headers: {
+            'X-CSRFToken': $("input[name='csrfmiddlewaretoken']").val(),
+        },
+        contentType: "application/json",
+        data: JSON.stringify({
+            marks_type: "exam",
+            subject_marks: subjectMarks,
+            exam_year: $("#exam-select").val(),
+        }),
+        success: function() {
+            alert("Exam marks saved successfully");
+            window.location.href = "{% url 'teacher-classes' %}"; // Redirect after success
+        },
+        error: function() {
+            alert("Error saving exam marks");
+        }
+    });
+});
+
+    });
+</script>
+
+<h2>Add Marks for {{ student.get_name }}</h2>
+
+<div class="container">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="exam-select">Select Exam</label>
+            <select id="exam-select" name="exam_year" class="form-control" required>
+                <option value="" disabled selected>Select Exam</option>
+                {% for exam in exams %}
+                    <option value="{{ exam.id }}">{{ exam.year }} - {{ exam.get_term_display }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div id="subjects-container"></div>
+        <button type="submit" class="btn btn-primary">Save Marks</button>
+        <a href="{% url 'teacher-classes' %}" class="btn btn-secondary" style="margin-top: 15px;">Back to Classes</a>
+    </form>
+</div>
+{% endblock %}

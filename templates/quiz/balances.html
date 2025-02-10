@@ -1,0 +1,114 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    h3 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-heading {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px 5px 0 0;
+    }
+    .fee-table {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .scroll-container {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 400px; /* Adjust based on screen size */
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #ddd;
+    }
+    table thead {
+      background-color: #007bff;
+      color: #fff;
+    }
+    table th, table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    .btn-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<div class="container">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <span>Student Balances for Class: {{ class_name }}</span>
+    </div>
+
+    <div class="fee-table">
+      <div class="scroll-container">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+                <th>No</th>
+                <th>Student Name</th>
+                <th>Balance (UGX)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for balance in balances_data %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>  <!-- Serial number -->
+                    <td>{{ balance.student_name }}</td>
+                    <td>{{ balance.balance|floatformat:2 }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">No balances available</td>
+                </tr>
+            {% endfor %}
+        </tbody>        
+        </table>
+      </div>
+    </div>
+
+    <div class="btn-container">
+      <a href="{% url 'student-fees' %}?year_id={{ request.GET.year_id }}&term_id={{ request.GET.term_id }}&class_index={{ request.GET.class_index }}" class="btn btn-secondary">
+        Back to Fees Records
+      </a>
+    </div>
+    
+  </div>
+</div>
+
+{% endblock %}

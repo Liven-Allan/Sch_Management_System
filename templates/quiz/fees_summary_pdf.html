@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fees Summary Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Fees Summary Report</h2>
+        <p><strong>Year:</strong> {{ selected_year }}</p>
+        <p><strong>Term:</strong> {{ selected_term }}</p>
+        <p><strong>Date:</strong> {{ today }}</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Total Students</th>
+                    <th>Total Fees</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ total_students }}</td>
+                    <td>{{ total_fees }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

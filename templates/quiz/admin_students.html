@@ -1,0 +1,137 @@
+{% extends 'quiz/adminbase.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  
+    <style>
+    .class-title {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .fee-table {
+      margin: 20px;
+      text-align: center;
+    }
+
+    table {
+      margin-top: 20px;
+      width: 100%;
+      border: 1px solid #ddd;
+    }
+
+       table thead {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    table td, table th {
+      text-align: left;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+
+    table img {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    </style>
+  </head>
+
+<!-- Register & Add Student Button -->
+<div class="text-right" style="margin: 10px;">
+    <a href="{% url 'register-student' %}?class_index={{ class_index }}" class="btn btn-primary">
+        <span class="glyphicon glyphicon-plus"></span> Register Student
+      </a>
+      
+  </div>  
+
+<div class="fee-table">
+    {% if selected_class %}
+        <h3 class="class-title">{{ selected_class }}</h3>
+
+        <div class="nav-buttons">
+            {% if class_index > 0 %}
+                <a href="?class_index={{ class_index|add:'-1' }}" class="btn btn-primary" style="margin-right: 10px;">
+                    Previous
+                </a>
+            {% endif %}
+
+            {% if class_index < total_classes|add:'-1' %}
+                <a href="?class_index={{ class_index|add:'1' }}" class="btn btn-primary">
+                    Next
+                </a>
+            {% endif %}
+        </div>
+
+        {% if students_in_class %}
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>No</th> 
+                        <th>Name</th>
+                        <th>Profile Picture</th>
+                        <th>Mobile</th>
+                        <th>Address</th>
+                        <th>Action</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in students_in_class %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td> 
+                            <td>{{ s.get_name }}</td>
+                            <td>
+                                {% if s.profile_pic %}
+                                  <img src="{% static s.profile_pic.url %}" alt="Profile Pic" height="40px" width="40px">
+                                {% else %}
+                                  <img src="{% static 'default-profile-pic.jpg' %}" alt="No Profile Pic" height="40px" width="40px">
+                                {% endif %}
+                              </td>
+                            <td>{{ s.mobile }}</td>
+                            <td>{{ s.address }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="confirmDelete('{{ s.id }}')">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-center">No students in this class.</p>
+        {% endif %}
+    {% else %}
+        <p class="text-center">No classes available.</p>
+    {% endif %}
+</div>
+
+<!-- JavaScript for confirmation prompt -->
+<script>
+    function confirmDelete(studentId) {
+        const classIndex = new URLSearchParams(window.location.search).get("class_index") || 0;
+        if (confirm("Are you sure you want to delete this student?")) {
+            window.location.href = `{% url 'delete-student' 0 %}?class_index=${classIndex}`.replace('0', studentId);
+        }
+    }
+</script>
+
+
+{% endblock %}
